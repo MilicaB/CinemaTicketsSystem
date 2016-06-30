@@ -38,26 +38,25 @@ public class RegisterServlet extends HttpServlet {
 						String hashPassword = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
 						
 						new UserDAO().addUser(new User(email, username, hashPassword));
-						response.sendRedirect("./MoviesPage.jsp");
+						response.sendRedirect("./loginPage.html");
 					} catch (SQLException e) {
 						e.printStackTrace();
-						response.sendRedirect("./ErrorServlet");
 
 						request.setAttribute("errorDB", "This username is already taken!");
-						RequestDispatcher rd = request.getRequestDispatcher("./signUpPage.jsp");
+						RequestDispatcher rd = request.getRequestDispatcher("signUpPage.jsp");
 						rd.forward(request, response);
 
 					}
 				} else {
 					request.setAttribute("shortPassword", "The password must be at least 6 symbols!");
-					RequestDispatcher rd = request.getRequestDispatcher("register.jsp");
+					RequestDispatcher rd = request.getRequestDispatcher("signUpPage.jsp");
 					rd.forward(request, response);
 				}
 
 			} 
 		else {
 			request.setAttribute("errorMessage", "Incorrect username or password!");
-			RequestDispatcher rd = request.getRequestDispatcher("register.jsp");
+			RequestDispatcher rd = request.getRequestDispatcher("signUpPage.jsp");
 			rd.forward(request, response);
 		}
 
