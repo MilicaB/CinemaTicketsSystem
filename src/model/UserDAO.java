@@ -1,6 +1,5 @@
 package model;
 
-import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,19 +9,29 @@ import java.util.List;
 
 import pojo.User;
 
-public class UserDAO {
+public class UserDAO extends AbstractDAO implements IUserDAO{
 
-    public void addUser(User user) throws SQLException {
+    /* (non-Javadoc)
+	 * @see model.IUserDAO#addUser(pojo.User)
+	 */
+    @Override
+	public void addUser(User user) throws SQLException {
         Connection con = DBConnection.getInstance().getConnection();
-        PreparedStatement ps = con.prepareStatement("INSERT INTO user(username,password,email) VALUES(?,?,?,true);");
+        PreparedStatement ps = con.prepareStatement("INSERT INTO user(email,password,username,is_customer) VALUES(?,?,?,?);");
 
-        ps.setString(1, user.getUsername());
+        ps.setString(1, user.getEmail());
         ps.setString(2, user.getPassword());
-        ps.setString(3, user.getEmail());
+        ps.setString(3, user.getUsername());
+        ps.setBoolean(4, true);
+        
         ps.executeUpdate();
     }
 
-    public void addStaff(User user) throws SQLException {
+    /* (non-Javadoc)
+	 * @see model.IUserDAO#addStaff(pojo.User)
+	 */
+    @Override
+	public void addStaff(User user) throws SQLException {
         Connection con = DBConnection.getInstance().getConnection();
         PreparedStatement ps = con.prepareStatement("INSERT INTO user(username,password,email) VALUES(?,?,?,false);");
 
@@ -32,7 +41,11 @@ public class UserDAO {
         ps.executeUpdate();
     }
 
-    public boolean validateUserCredentials(String userName, String password) throws SQLException {
+    /* (non-Javadoc)
+	 * @see model.IUserDAO#validateUserCredentials(java.lang.String, java.lang.String)
+	 */
+    @Override
+	public boolean validateUserCredentials(String userName, String password) throws SQLException {
         Connection con = DBConnection.getInstance().getConnection();
         PreparedStatement ps = con.prepareStatement("SELECT * FROM user WHERE userName=? AND password=?");
         ps.setString(1, userName);
@@ -41,7 +54,11 @@ public class UserDAO {
         return executeQuery.getString(1) != null;
     }
 
-    public List<User> findAllUsers() throws SQLException {
+    /* (non-Javadoc)
+	 * @see model.IUserDAO#findAllUsers()
+	 */
+    @Override
+	public List<User> findAllUsers() throws SQLException {
         Connection con = DBConnection.getInstance().getConnection();
         PreparedStatement ps = con.prepareStatement("SELECT * FROM User");
         List<User> users = new LinkedList<>();
@@ -57,7 +74,11 @@ public class UserDAO {
         return users;
     }
 
-    public User findUserByName(String userName) throws SQLException {
+    /* (non-Javadoc)
+	 * @see model.IUserDAO#findUserByName(java.lang.String)
+	 */
+    @Override
+	public User findUserByName(String userName) throws SQLException {
         Connection con = DBConnection.getInstance().getConnection();
         PreparedStatement ps = con.prepareStatement("SELECT * FROM User WHERE userName = ?");
         ps.setString(1, userName);
@@ -73,3 +94,4 @@ public class UserDAO {
     }
 
 }
+
